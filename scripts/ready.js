@@ -1,15 +1,19 @@
 const isReady = ( bindApp, stallApp ) => {
-  switch ( document.readyState ) {
-  case "interactive":
-    // The document has finished loading. We can now access the DOM elements.
-    bindApp( new viewModel() );
-    break;
-  default:
-    //do Nothing
-  }
+  document.addEventListener( 'readystatechange', ( event ) => {
+    if ( document.readyState === "complete" ) {
+      bindApp( new viewModel() );
+    }
+  } );
 };
 
 new Promise( isReady )
   .then( VM => {
+    const drawers = document.querySelectorAll( '.drawer-handle' );
+    const body = document.querySelector( 'BODY' );
+    for ( const drawer of drawers ) {
+      drawer.onclick = function () {
+        body.classList.toggle( 'off-canvas-ui' );
+      };
+    }
     ko.applyBindings( VM );
   } )

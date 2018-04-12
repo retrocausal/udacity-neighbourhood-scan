@@ -29,12 +29,6 @@ header, footer {
   height: auto;
 }
 
-.off-canvas {
-  position: absolute;
-  transform: translate3d(calc(-1*75vw), 0, 0);
-  transition: transform 0.2s;
-}
-
 .user-interface {
   width: 50vw;
   box-shadow: 0 0 10px 0 #333;
@@ -42,6 +36,14 @@ header, footer {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.2s;
+  position: absolute;
+}
+
+.off-canvas-ui .user-interface {
+  transform: translate3d(calc(-1*75vw), 0, 0);
+  transition: transform 0.2s;
 }
 
 .user-interface-headmast, .headmast {
