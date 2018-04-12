@@ -1,0 +1,83 @@
+* {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Quicksand', sans-serif;
+  box-sizing: border-box;
+}
+
+BODY {
+  width: auto;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+header, footer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.map-container {
+  width: 100vw;
+  margin: auto;
+}
+
+.google-map {
+  width: 100%;
+  min-height: calc(3/4*100vw);
+  height: auto;
+}
+
+.off-canvas {
+  position: absolute;
+  transform: translate3d(calc(-1*75vw), 0, 0);
+  transition: transform 0.2s;
+}
+
+.user-interface {
+  width: 50vw;
+  box-shadow: 0 0 10px 0 #333;
+  min-height: calc(3/4*100vw);
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.user-interface-headmast, .headmast {
+  background: #0000ff;
+  color: #eee;
+  font-weight: bold;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1em;
+}
+
+.ui-headmast-header {
+  width: 85%;
+  text-align: center;
+  font-variant: small-caps;
+  line-height: 1.2;
+}
+
+.ui-headmast-drawer-closer {
+  width: 15%;
+  line-height: 1.2;
+}
+
+.headmast {
+  box-shadow: 0 0 10px 0 #333;
+}
+
+.ui-headmast-drawer-opener {
+  width: 25%;
+  line-height: 1.2;
+}
+
+.headmast-header {
+  width: 75%;
+  font-variant: small-caps;
+  line-height: 1.2;
+}
