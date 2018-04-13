@@ -39,8 +39,8 @@
     </section>
     <div class="user-interface-interaction">
       <input class="ui-interaction-box" type="text" name="query" value="" placeholder="A place to view on the map" data-bind='textInput:ui_query'>
-      <ul class="user-interface-places">
-
+      <ul class="user-interface-places" data-bind='foreach:venues'>
+        <li class="user-interface-place" data-bind='text:name'></li>
       </ul>
     </div>
   </aside>

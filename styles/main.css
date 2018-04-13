@@ -39,6 +39,7 @@ header, footer {
   width: 60vw;
   box-shadow: 0 0 10px 0 #333;
   min-height: 75vh;
+  max-height: 75vh;
   height: auto;
   display: flex;
   flex-wrap: wrap;
