@@ -1,5 +1,5 @@
 * {
-  width: 100%;
+  width: auto;
   margin: 0;
   padding: 0;
   font-family: 'Quicksand', sans-serif;
@@ -7,38 +7,48 @@
 }
 
 BODY {
-  width: auto;
   margin: auto;
   display: flex;
   flex-wrap: wrap;
 }
 
 header, footer {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
 }
 
 .map-container {
-  width: 100vw;
+  width: 100%;
   margin: auto;
 }
 
 .google-map {
   width: 100%;
-  min-height: calc(3/4*100vw);
-  height: auto;
+  min-height: 75vh;
+  max-height: 75vh;
+}
+
+.map {
+  width: 100%;
+  min-height: 75vh;
+  max-height: 75vh;
 }
 
 .user-interface {
-  width: 50vw;
+  width: 60vw;
   box-shadow: 0 0 10px 0 #333;
-  min-height: calc(3/4*100vw);
+  min-height: 75vh;
+  height: auto;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
+  z-index: 10;
   transform: translate3d(0, 0, 0);
   transition: transform 0.2s;
   position: absolute;
+  background-color: #eee;
+  overflow-y: scroll;
 }
 
 .off-canvas-ui .user-interface {
@@ -64,12 +74,34 @@ header, footer {
   line-height: 1.2;
 }
 
+.ui-interaction-box {
+  width: calc(100% - 1px);
+  padding: 1em;
+  box-shadow: 0 0 0.1em 0 #333;
+  font-family: 'Montserrat', serif;
+  font-variant: small-caps;
+  font-variant-caps: petite-caps;
+}
+
+.user-interface-places {
+  list-style: none;
+  width: 100%;
+  margin: 2em 0;
+}
+
+.user-interface-place {
+  width: 100%;
+  padding: .2em;
+  line-height: 1.5;
+}
+
 .ui-headmast-drawer-closer {
   width: 15%;
   line-height: 1.2;
 }
 
 .headmast {
+  width: 100%;
   box-shadow: 0 0 10px 0 #333;
 }
 

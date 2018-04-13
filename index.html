@@ -25,7 +25,7 @@
   </header>
   <main class="map-container">
     <article class="google-map">
-      <section class="map">
+      <section class="map" id="map">
 
       </section>
     </article>
@@ -37,10 +37,17 @@
         <a class="fa fa-bars drawer-handle"></a>
       </h2>
     </section>
+    <div class="user-interface-interaction">
+      <input class="ui-interaction-box" type="text" name="query" value="" placeholder="A place to view on the map" data-bind='textInput:ui_query'>
+      <ul class="user-interface-places">
+
+      </ul>
+    </div>
   </aside>
   <footer>
     <script src="./scripts/ready.js"></script>
     <script src="./scripts/app.js"></script>
+    <script src="./scripts/google.js"></script>
     <script async src="./bower_components/knockout/dist/knockout.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
   </footer>

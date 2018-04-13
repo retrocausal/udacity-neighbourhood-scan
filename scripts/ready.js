@@ -1,7 +1,7 @@
 const isReady = ( bindApp, stallApp ) => {
   document.addEventListener( 'readystatechange', ( event ) => {
     if ( document.readyState === "complete" ) {
-      bindApp( new viewModel() );
+      bindApp( new ViewModel() );
     }
   } );
 };
@@ -16,4 +16,8 @@ new Promise( isReady )
       };
     }
     ko.applyBindings( VM );
+    const footer = document.querySelector( 'footer' );
+    const gmap = document.createElement( 'script' );
+    gmap.setAttribute( 'src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBEfoVyYTBKdQL2RmQ72luqf7GyUzXyN1g&libraries=drawing,geometry&callback=initMap' );
+    footer.appendChild( gmap );
   } )
