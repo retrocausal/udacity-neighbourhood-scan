@@ -37,15 +37,19 @@
         <a class="fa fa-bars drawer-handle"></a>
       </h2>
     </section>
-    <div class="user-interface-interaction">
+    <section class="user-interface-interaction">
       <input class="ui-interaction-box" type="text" name="query" value="" placeholder="A place to view on the map" data-bind='textInput:ui_query'>
+      <div class="error">
+        <h5 class="error-msg" data-bind='text:errorMsg'></h5>
+      </div>
       <ul class="user-interface-places" data-bind='foreach:venues'>
         <li class="user-interface-place" data-bind='text:name'></li>
       </ul>
-    </div>
+    </section>
   </aside>
   <footer>
     <script src="./scripts/ready.js"></script>
+    <script src="./scripts/api.js"></script>
     <script src="./scripts/app.js"></script>
     <script src="./scripts/google.js"></script>
     <script async src="./bower_components/knockout/dist/knockout.js"></script>

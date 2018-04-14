@@ -43,7 +43,6 @@ header, footer {
   height: auto;
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;
   z-index: 10;
   transform: translate3d(0, 0, 0);
   transition: transform 0.2s;
@@ -66,6 +65,7 @@ header, footer {
   justify-content: space-around;
   align-items: center;
   padding: 1em;
+  width: 100%;
 }
 
 .ui-headmast-header {
@@ -73,6 +73,15 @@ header, footer {
   text-align: center;
   font-variant: small-caps;
   line-height: 1.2;
+}
+
+.ui-headmast-drawer-closer {
+  width: 15%;
+  line-height: 1.2;
+}
+
+.user-interface-interaction {
+  width: 100%;
 }
 
 .ui-interaction-box {
@@ -85,20 +94,38 @@ header, footer {
 }
 
 .user-interface-places {
-  list-style: none;
   width: 100%;
-  margin: 2em 0;
+  margin: .2em 0;
 }
 
 .user-interface-place {
   width: 100%;
   padding: .2em;
   line-height: 1.5;
+  font-variant: small-caps;
+  box-shadow: 0 0 0 1px #ccc;
+  list-style-type: none;
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.ui-headmast-drawer-closer {
-  width: 15%;
-  line-height: 1.2;
+.error {
+  width: 100%;
+  color: #ff0000;
+  font-weight: bold;
+  padding: 1em 0;
+  min-height: 0;
+}
+
+.error-msg {
+  font-family: 'Montserrat', serif;
+  font-variant: small-caps;
+  text-align: center;
+  font-variant-caps: petite-caps;
 }
 
 .headmast {
