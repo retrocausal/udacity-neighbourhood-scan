@@ -43,7 +43,15 @@
         <h5 class="error-msg" data-bind='text:errorMsg'></h5>
       </div>
       <ul class="user-interface-places" data-bind='foreach:venues'>
-        <li class="user-interface-place" data-bind='text:name'></li>
+        <li class="user-interface-place">
+          <div class="place-name" data-bind='text:name,click:$parent.fetchInfo'></div>
+          <div class="place-details-drawer-opener">
+            <a class="far fa-plus-square detail-expander" data-bind='click:$parent.fetchInfo'></a>
+          </div>
+          <div class="place-details" data-bind='if:$parent.hasVenue($data.id)'>
+            <h2>hi</h2>
+          </div>
+        </li>
       </ul>
     </section>
   </aside>

@@ -105,12 +105,27 @@ header, footer {
   font-variant: small-caps;
   box-shadow: 0 0 0 1px #ccc;
   list-style-type: none;
-  cursor: pointer;
   min-height: 48px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  flex-direction: column;
   justify-content: center;
+}
+
+.place-name {
+  width: 90%;
+}
+
+.place-details-drawer-opener {
+  width: 10%;
+}
+
+.detail-expander {
+  cursor: pointer;
+}
+
+.place-details {
+  width: 100%;
 }
 
 .error {

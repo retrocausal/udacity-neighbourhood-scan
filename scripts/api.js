@@ -21,16 +21,29 @@ class Foursquare extends API {
     this.client_key = 'RYPI50YPMRG1VY3FQEQV1QAI333HGAXIO0IUOQDU510LPV2L';
     this.version_key = '20180412';
     this.epOperand = 'search';
-    this.intent = 'browse';
     this.near = 'NY';
     this.errorOnFetch = 'Could not load places to hang out at';
     this.limit = 24;
   }
   getEndPoint() {
-    return `${this.endpointBase}${this.epOperand}?intent=${this.intent}&v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&near=${this.near}&limit=${this.limit}`;
+    let ep = `${this.endpointBase}${this.epOperand}?v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&near=${this.near}&limit=${this.limit}`;
+    if ( this.intent )
+      ep = ep + `&intent=${this.intent}`;
+    if ( this.section )
+      ep = ep + `&section=${this.section}`;
+    return ep;
   }
   getTrendingVenues() {
     this.epOperand = 'trending';
+    this.limit = 50;
+    this.section = false;
+    this.intent = false;
+    return this.fetch();
+  }
+  getExplorableVenues() {
+    this.epOperand = 'explore';
+    this.intent = false;
+    this.section = 'topPicks';
     this.limit = 50;
     return this.fetch();
   }
