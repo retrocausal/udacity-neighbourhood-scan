@@ -38,18 +38,30 @@
       </h2>
     </section>
     <section class="user-interface-interaction">
-      <input class="ui-interaction-box" type="text" name="query" value="" placeholder="A place to view on the map" data-bind='textInput:ui_query'>
+      <input class="ui-interaction-box" type="text" name="query" value="" placeholder="A venue to view on the map" data-bind='textInput:ui_query'>
       <div class="error">
         <h5 class="error-msg" data-bind='text:errorMsg'></h5>
       </div>
       <ul class="user-interface-places" data-bind='foreach:venues'>
-        <li class="user-interface-place">
-          <div class="place-name" data-bind='text:name,click:$parent.fetchInfo'></div>
-          <div class="place-details-drawer-opener">
-            <a class="far fa-plus-square detail-expander" data-bind='click:$parent.fetchInfo'></a>
+        <li class="user-interface-venue">
+          <div class="venue-name" data-bind='text:name'></div>
+          <div class="venue-details-drawer-opener">
+            <span class="far fa-plus-square venue-details-expander" data-bind='click:$parent.fetchInfo'></span>
           </div>
-          <div class="place-details" data-bind='if:$parent.hasVenue($data.id)'>
-            <h2>hi</h2>
+          <div class="venue-details" data-bind='if:$parent.hasVenue($data)'>
+            <section class="venue-card">
+              <div class="venue-address" data-bind='with:location.formattedAddress'>
+                <h4>Address</h4>
+                <span data-bind='text:$data'></span>
+              </div>
+              <div class="venue-categories">
+                <h4>listed as</h4>
+                <span data-bind='text:$data.categories[0].name'></span>
+              </div>
+              <div class="venue-map">
+
+              </div>
+            </section>
           </div>
         </li>
       </ul>

@@ -18,6 +18,10 @@ header, footer {
   flex-wrap: wrap;
 }
 
+img, svg {
+  max-width: 100%;
+}
+
 .map-container {
   width: 100%;
   margin: auto;
@@ -98,7 +102,7 @@ header, footer {
   margin: .2em 0;
 }
 
-.user-interface-place {
+.user-interface-venue {
   width: 100%;
   padding: .2em;
   line-height: 1.5;
@@ -112,20 +116,47 @@ header, footer {
   justify-content: center;
 }
 
-.place-name {
+.venue-name {
   width: 90%;
 }
 
-.place-details-drawer-opener {
+.venue-details-drawer-opener {
   width: 10%;
+  max-width: 10%;
 }
 
-.detail-expander {
+.venue-details-expander {
   cursor: pointer;
+  max-width: 100%;
 }
 
-.place-details {
+.venue-details {
   width: 100%;
+}
+
+.venue-card {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.venue-address {
+  width: 60%;
+  border-right: 1px solid #ccc;
+  padding: 0.5em;
+}
+
+.venue-categories {
+  width: 40%;
+  padding: 0.5em;
+}
+
+.venue-map {
+  margin: 1em auto;
+  border-top: 1px solid #ccc;
+  width: 100%;
+  padding: 0.5em;
 }
 
 .error {
