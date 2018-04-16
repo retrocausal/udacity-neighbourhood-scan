@@ -11,6 +11,11 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400%7CCinzel+Decorative%7CLibre+Barcode+39+Extended%7CQuicksand:400,700%7CRaleway:500" rel="stylesheet">
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/screen.css">
+  <script>
+    FontAwesomeConfig = {
+      autoReplaceSvg: 'nest'
+    }
+  </script>
   <title></title>
 </head>
 
@@ -47,7 +52,7 @@
         <li class="user-interface-venue">
           <div class="venue-name" data-bind='text:name'></div>
           <div class="venue-details-drawer-opener">
-            <span class="far fa-plus-square venue-details-expander" data-bind='click:$parent.fetchInfo'></span>
+            <a class="fas fa-plus-circle venue-details-expander" data-bind='click:$parent.fetchInfo'></a>
           </div>
           <div class="venue-details" data-bind='if:$parent.hasVenue($data)'>
             <section class="venue-card">
@@ -73,8 +78,8 @@
     <script src="./scripts/api.js"></script>
     <script src="./scripts/app.js"></script>
     <script src="./scripts/google.js"></script>
-    <script async src="./bower_components/knockout/dist/knockout.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
+    <script defer src="./bower_components/knockout/dist/knockout.js"></script>
   </footer>
 </body>
 

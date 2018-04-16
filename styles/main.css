@@ -118,6 +118,7 @@ img, svg {
 
 .venue-name {
   width: 90%;
+  max-width: 90%;
 }
 
 .venue-details-drawer-opener {
@@ -128,6 +129,10 @@ img, svg {
 .venue-details-expander {
   cursor: pointer;
   max-width: 100%;
+  visibility: visible;
+  display: block;
+  font-weight: bolder;
+  font-family: monospace;
 }
 
 .venue-details {

@@ -1,3 +1,4 @@
+let vModel;
 /*
  *@defineExtenders defines custom string validations for the search box
  *It currently defines one extender, the alphaNumeric
@@ -111,4 +112,10 @@ const ViewModel = function () {
     //Until then, return true if the currentVenue is set to the clicked venue
     return ( this.currentVenue() === venue.id );
   };
+};
+
+const init = function () {
+  ko.options.useOnlyNativeEvents = true;
+  const VM = new ViewModel();
+  ko.applyBindings( VM );
 };
