@@ -1,4 +1,3 @@
-let vModel;
 /*
  *@defineExtenders defines custom string validations for the search box
  *It currently defines one extender, the alphaNumeric
@@ -41,7 +40,7 @@ const defineExtenders = function () {
  *It defines all possible view bound and other properties of our representation
  *of the app in terms of the data it abstracts
  */
-const ViewModel = function () {
+const App = function () {
   defineExtenders();
   this.ui_query = ko.observable( '' )
     .extend( {
@@ -72,29 +71,33 @@ const ViewModel = function () {
       } )
   } );
   this.filteredVenues = ko.computed( () => {
+    this.errorMsg( '' );
+    let venues = ko.observableArray();
     if ( this.ui_query()
       .length > 0 ) {
-      this.errorMsg( '' );
       const SubString = this.ui_query()
         .toLowerCase();
-      const venues = ko.observableArray();
       for ( const venue of this.venues() ) {
         if ( venue.name.toLowerCase()
           .indexOf( SubString ) !== -1 ) {
           venues.push( venue );
         }
       }
-      if ( venues()
-        .length > 0 ) {
-        return venues();
-      } else {
-        this.errorMsg( 'No Results' );
-      }
+    }
+    if ( this.ui_query()
+      .length && !venues()
+      .length ) {
+      this.errorMsg( 'No results' );
     } else {
-      this.errorMsg( '' );
-      return this.venues();
+      const venueList = ( venues()
+        .length > 0 ) ? venues() : this.venues();
+      if ( this.plotter ) {
+        this.plotter.locations = venueList;
+      }
+      return venueList;
     }
   } );
+
   this.fetchInfo = ( venue ) => {
     //Once you can get a premium foursquare account,
     //use this space to fetch venue details
@@ -113,9 +116,20 @@ const ViewModel = function () {
     return ( this.currentVenue() === venue.id );
   };
 };
-
+let ViewModel;
 const init = function () {
   ko.options.useOnlyNativeEvents = true;
-  const VM = new ViewModel();
-  ko.applyBindings( VM );
+  ViewModel = new App();
+  ko.applyBindings( ViewModel );
+};
+
+const addPlotter = function () {
+  const plotter = new GoogleMap()
+    .init()
+    .layout();
+  const locations = ViewModel.filteredVenues();
+  if ( locations.length ) {
+    plotter.locations = locations;
+  }
+  ViewModel.plotter = plotter;
 };

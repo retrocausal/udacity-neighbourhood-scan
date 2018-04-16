@@ -18,6 +18,9 @@ new Promise( isReady )
     init();
     const footer = document.querySelector( 'footer' );
     const gmap = document.createElement( 'script' );
-    gmap.setAttribute( 'src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBEfoVyYTBKdQL2RmQ72luqf7GyUzXyN1g&libraries=drawing,geometry&callback=initMap' );
+    gmap.setAttribute( 'src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBEfoVyYTBKdQL2RmQ72luqf7GyUzXyN1g&libraries=drawing,geometry' );
+    gmap.onload = function () {
+      return addPlotter();
+    };
     footer.appendChild( gmap );
   } )
