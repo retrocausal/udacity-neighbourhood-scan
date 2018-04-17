@@ -24,9 +24,11 @@ class Foursquare extends API {
     this.near = 'NY';
     this.errorOnFetch = 'Could not load places to hang out at';
     this.limit = 24;
+    this.radius = 2500;
+    this.llAcc = 10000.0001;
   }
   getEndPoint() {
-    let ep = `${this.endpointBase}${this.epOperand}?v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&near=${this.near}&limit=${this.limit}`;
+    let ep = `${this.endpointBase}${this.epOperand}?v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&near=${this.near}&limit=${this.limit}&radius=${this.radius}&llAcc=${this.llAcc}`;
     if ( this.intent )
       ep = ep + `&intent=${this.intent}`;
     if ( this.section )

@@ -116,6 +116,10 @@ const App = function () {
     //Until then, return true if the currentVenue is set to the clicked venue
     return ( this.currentVenue() === venue.id );
   };
+
+  this.showMe = ( venue ) => {
+    return this.plotter.markPlace( venue );
+  };
 };
 let ViewModel;
 const init = function () {

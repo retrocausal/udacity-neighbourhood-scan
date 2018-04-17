@@ -4,14 +4,13 @@ class GoogleMap {
   }
   set _locations( places ) {
     this.resetMarkers();
-    for ( const location of places ) {
-      this.markables.set( location, {
-        lat: location.location.lat,
-        lng: location.location.lng
+    for ( const place of places ) {
+      this.markables.set( place, {
+        lat: place.location.lat,
+        lng: place.location.lng
       } );
     }
     this.markPlaces();
-    console.log( this.markables );
   }
   init( ...options ) {
     const Options = ( options.length ) ? options : [ {
@@ -28,7 +27,8 @@ class GoogleMap {
     }
     this.base = google.maps;
     this.markables = new Map();
-    this.markers = new Set();
+    this.markers = new Map();
+    this.altMarker();
     return this;
   }
   layout() {
@@ -39,7 +39,7 @@ class GoogleMap {
   resetMarkers() {
     this.markables.clear();
     for ( const marker of this.markers ) {
-      marker.setMap( null );
+      marker[ 1 ].setMap( null );
     }
     this.markers.clear();
   }
@@ -54,12 +54,29 @@ class GoogleMap {
         animation: this.base.Animation.DROP
       } );
       bounds.extend( marker.position );
+      if ( !this.icon ) {
+        this.icon = marker.getIcon();
+      }
       marker.addListener( 'click', () => {
+        marker.setAnimation( null );
         this.showInfo( marker, infoWindow );
       } );
-      this.markers.add( marker );
+      const key = marker.title.toLowerCase()
+        .replace( / /g, '' );
+      this.markers.set( key, marker );
     }
     this.map.fitBounds( bounds );
+  }
+  markPlace( place ) {
+    const key = place.name.toLowerCase()
+      .replace( / /g, '' );
+    const marker = this.markers.get( key );
+    for ( const marker of this.markers ) {
+      marker[ 1 ].setIcon( this.icon );
+      marker[ 1 ].setAnimation( null );
+    }
+    marker.setIcon( this.altIcon );
+    marker.setAnimation( this.base.Animation.BOUNCE );
   }
   // This function populates the infowindow when the marker is clicked. We'll only allow
   // one infowindow which will open at the marker that is clicked, and populate based
@@ -75,5 +92,11 @@ class GoogleMap {
         infowindow.setMarker = null;
       } );
     }
+  }
+  altMarker( color = '0000ff' ) {
+    //borrowed from official google maps api documentation example and created from
+    //https://developers.google.com/chart/image/docs/gallery/dynamic_icons#pins
+    this.altIcon = new this.base.MarkerImage(
+      `http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|${color}|40|_|%E2%80%A2` );
   }
 }
