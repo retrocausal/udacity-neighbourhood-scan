@@ -66,6 +66,7 @@ const App = function () {
         return recommendedVenues;
       } )
       .catch( exception => {
+        console.warn( exception );
         this.errorMsg( this.fSqAPI()
           .errorOnFetch );
       } )
@@ -91,8 +92,8 @@ const App = function () {
     } else {
       const venueList = ( venues()
         .length > 0 ) ? venues() : this.venues();
-      if ( this.plotter ) {
-        this.plotter.locations = venueList;
+      if ( this.plotter instanceof GoogleMap ) {
+        this.plotter._locations = venueList;
       }
       return venueList;
     }
@@ -127,9 +128,5 @@ const addPlotter = function () {
   const plotter = new GoogleMap()
     .init()
     .layout();
-  const locations = ViewModel.filteredVenues();
-  if ( locations.length ) {
-    plotter.locations = locations;
-  }
   ViewModel.plotter = plotter;
 };
