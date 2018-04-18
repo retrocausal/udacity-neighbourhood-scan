@@ -51,11 +51,10 @@ const App = function () {
   this.currentVenue = ko.observable( '' );
   this.venueCards = new Map();
   //gather list of venues at current location from foursuare API
-  this.fSqAPI = ko.observable( new Foursquare() );
-  this.fSqVenues = ko.computed( () => {
+  this.fetchFSqVenues = function () {
     //Fetch venues around the chosen place from foursquare
     /*@documentation : https://developer.foursquare.com/docs/api/venues/explore*/
-    return this.fSqAPI()
+    return new Foursquare()
       .getExplorableVenues()
       .then( foursquare => {
         const recommendedVenues = foursquare.response.groups[ 0 ].items;
@@ -70,15 +69,27 @@ const App = function () {
         this.errorMsg( this.fSqAPI()
           .errorOnFetch );
       } )
-  } );
+  };
+  /*
+   *filteredVenues is what is listed on the app
+   *filteredVenues checks if the user has input a query
+   *Searches the current list of places for the queried input
+   *Returns all places if nothing mathces
+   *else returns matched places
+   *While filteredVenues updates itself, on update, it also
+   *sets the google map's markable locations
+   *HOWEVER, it does not create hese markers.
+   */
   this.filteredVenues = ko.computed( () => {
     const venues = this.venues();
     let venueList = [];
     this.errorMsg( '' );
     if ( this.ui_query()
       .length ) {
+      //gatherr user input
       const SubString = this.ui_query()
         .toLowerCase();
+      //do a search
       for ( const venue of venues ) {
         if ( venue.name.toLowerCase()
           .indexOf( SubString ) !== -1 ) {
@@ -90,6 +101,7 @@ const App = function () {
       }
     }
     venueList = ( venueList.length ) ? venueList : venues;
+    //On list updation, update google map object's markable places
     if ( this.plotter instanceof GoogleMap ) {
       this.plotter._locations = venueList;
     }
@@ -113,18 +125,25 @@ const App = function () {
     //Until then, return true if the currentVenue is set to the clicked venue
     return ( this.currentVenue() === venue.id );
   };
-
+  //direct google map object to mark a place
+  //happens when user clicks on a place
   this.showMe = ( venue ) => {
     return this.plotter.markPlace( venue );
   };
 };
 let ViewModel;
+//Where everything begins
 const init = function () {
+  //Do not use JQ
   ko.options.useOnlyNativeEvents = true;
+  //create App
   ViewModel = new App();
+  //Apply Bindings
   ko.applyBindings( ViewModel );
+  //fetch trending venues to list
+  ViewModel.fetchFSqVenues();
 };
-
+//addPlotter sets the mapper for our app
 const addPlotter = function () {
   const plotter = new GoogleMap()
     .init()
