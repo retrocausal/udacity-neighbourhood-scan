@@ -19,7 +19,7 @@ const defineExtenders = function () {
       if ( !value || value.length === 0 ) {
         target.hasError( false );
       } else {
-        const invalid = /[^a-zA-Z0-9]/.test( value );
+        const invalid = /[^a-zA-Z0-9\d\s]/.test( value );
         target.hasError( invalid ? true : false );
         target.validationMessage( invalid ? overrideMessage || "This field is required to contain only alphanumeric content" : "" );
       }
@@ -72,31 +72,28 @@ const App = function () {
       } )
   } );
   this.filteredVenues = ko.computed( () => {
+    const venues = this.venues();
+    let venueList = [];
     this.errorMsg( '' );
-    let venues = ko.observableArray();
     if ( this.ui_query()
-      .length > 0 ) {
+      .length ) {
       const SubString = this.ui_query()
         .toLowerCase();
-      for ( const venue of this.venues() ) {
+      for ( const venue of venues ) {
         if ( venue.name.toLowerCase()
           .indexOf( SubString ) !== -1 ) {
-          venues.push( venue );
+          venueList.push( venue );
         }
       }
-    }
-    if ( this.ui_query()
-      .length && !venues()
-      .length ) {
-      this.errorMsg( 'No results' );
-    } else {
-      const venueList = ( venues()
-        .length > 0 ) ? venues() : this.venues();
-      if ( this.plotter instanceof GoogleMap ) {
-        this.plotter._locations = venueList;
+      if ( !venueList.length ) {
+        this.errorMsg( 'Ugh! cant find that! Try something else' );
       }
-      return venueList;
     }
+    venueList = ( venueList.length ) ? venueList : venues;
+    if ( this.plotter instanceof GoogleMap ) {
+      this.plotter._locations = venueList;
+    }
+    return venueList;
   } );
 
   this.fetchInfo = ( venue ) => {
