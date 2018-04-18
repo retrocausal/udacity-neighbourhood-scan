@@ -97,6 +97,6 @@ class GoogleMap {
     //borrowed from official google maps api documentation example and created from
     //https://developers.google.com/chart/image/docs/gallery/dynamic_icons#pins
     this.altIcon = new this.base.MarkerImage(
-      `http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|${color}|40|_|%E2%80%A2` );
+      `https://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|${color}|40|_|%E2%80%A2` );
   }
 }
