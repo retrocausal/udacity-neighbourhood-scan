@@ -17,15 +17,13 @@ new Promise( isReady )
         body.classList.toggle( 'off-canvas-ui' );
       };
     }
-    //Create new App
-    init();
     //Place a script tag that downloads necessary things and draws a map
     const footer = document.querySelector( 'footer' );
     const gmap = document.createElement( 'script' );
-    gmap.setAttribute( 'src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBEfoVyYTBKdQL2RmQ72luqf7GyUzXyN1g&libraries=drawing,geometry' );
+    gmap.setAttribute( 'src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBnAnZgkPFVO23pfyvEq9VFxFZdybOIpEU&libraries=drawing,geometry' );
     //Layout the map
     gmap.onload = function () {
-      setTimeout( addPlotter, 1000 );
+      addPlotter();
     };
     //Uh Oh! something went wrong. Inform the user
     gmap.onerror = function ( e ) {

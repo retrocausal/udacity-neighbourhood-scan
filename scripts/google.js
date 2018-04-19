@@ -14,18 +14,28 @@ class GoogleMap {
   //When the app sets a list of locations, grab them
   set _locations( places ) {
     //Reset and delete previously set markers
-    this.resetMarkers();
+    //  this.resetMarkers();
+    this.geocodeHelpers.clear();
+    this.markables.clear();
     //Define a LatLng object for each place
     for ( const place of places ) {
       this.markables.set( place, {
         lat: place.location.lat,
         lng: place.location.lng
       } );
+      this.geocodeHelpers.set( place, place.location );
     }
     //rewrite latlngs
-    this.geocode();
-    //Mark places
-    this.markPlaces();
+    this.geocode()
+      .then( _ => {
+        //Reset and delete previously set markers
+        this.resetMarkers();
+        //Mark places
+        this.markPlaces();
+      } )
+      .catch( exception => {
+        console.warn( exception );
+      } );
   }
   /*
    *@init centers the map, applies default styles and defines an icon
@@ -47,6 +57,7 @@ class GoogleMap {
     this.base = google.maps;
     this.markables = new Map();
     this.markers = new Map();
+    this.geocodeHelpers = new Map();
     this.altMarker();
     return this;
   }
@@ -62,7 +73,6 @@ class GoogleMap {
    *@resetMarkers refreshes the map and deletes stale markers
    */
   resetMarkers() {
-    this.markables.clear();
     for ( const marker of this.markers ) {
       marker[ 1 ].setMap( null );
     }
@@ -70,16 +80,58 @@ class GoogleMap {
   }
   /*
    *@geocode geocodes a place returned by foursquare for accuracy reasons
+   *foursquare's API gives me inaccurate per google map lat lng
+   *hence, correct with a geocode search below
    */
   geocode() {
-    console.log( this.markables );
+    let promises = [];
+    //init geocoder
+    const gCoder = new this.base.Geocoder();
+    let geocodables = new Set();
+    //loop through foursquare returned set of places
+    for ( const helper of this.geocodeHelpers ) {
+      //gather address , name, lat and lng
+      //This is incase geocode can not geocode a foursquare venue
+      const address = helper[ 1 ].formattedAddress[ 0 ];
+      const name = helper[ 0 ].name;
+      const postalCode = helper[ 1 ].postalCode;
+      const geocoder = {
+        address: name,
+        componentRestrictions: {
+          locality: 'New York',
+          country: 'US',
+          postalCode: postalCode
+        }
+      };
+      const applyGeocode = ( results, status ) => {
+        if ( status === this.base.GeocoderStatus.OK ) {
+          const location = results[ 0 ].geometry.location;
+          const markable = this.markables.get( helper[ 0 ] );
+          markable.lat = location.lat();
+          markable.lng = location.lng();
+        }
+      };
+      const asyncMapMark = ( resolve ) => {
+        gCoder.geocode( geocoder, ( results, status ) => {
+          applyGeocode( results, status );
+          resolve();
+        } );
+      };
+      const myPromise = new Promise( asyncMapMark )
+        .catch( exception => {
+          console.warn( exception );
+          return exception;
+        } );
+      promises.push( myPromise );
+    }
+    return Promise.all( promises );
   }
   /*
    *@markPlaces places markers on the map
    *creates an infoWindow for each marker
    *binds the map to be centered around list of places
    */
-  markPlaces() {
+  markPlaces( place ) {
     //create infoWindow
     const infoWindow = new this.base.InfoWindow();
     //get current bounds
@@ -115,11 +167,10 @@ class GoogleMap {
     this.map.fitBounds( bounds );
   }
   /*
-   *@markPlace marks a single place on the map
-   *If the place is already marked, the marker is
+   *@highlightPlace highlights a single place on the map
    *highlighted blue, and bounced
    */
-  markPlace( place ) {
+  highlightPlace( place ) {
     const key = place.name.toLowerCase()
       .replace( / /g, '' );
     //Is the marker already placed?
@@ -132,6 +183,9 @@ class GoogleMap {
     }
     //highlight this marker
     marker.setIcon( this.altIcon );
+    //center map
+    const center = marker.getPosition();
+    this.map.setCenter( center );
     //bounce
     marker.setAnimation( this.base.Animation.BOUNCE );
   }

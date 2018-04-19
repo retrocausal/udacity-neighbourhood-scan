@@ -34,7 +34,7 @@ class Foursquare extends API {
     this.llAcc = 10000.0001;
   }
   getEndPoint() {
-    let ep = `${this.endpointBase}${this.epOperand}?v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&near=${this.near}&limit=${this.limit}&radius=${this.radius}&llAcc=${this.llAcc}`;
+    let ep = `${this.endpointBase}${this.epOperand}?v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&time=any&day=any&near=${this.near}&limit=${this.limit}&radius=${this.radius}&llAcc=${this.llAcc}`;
     if ( this.intent )
       ep = ep + `&intent=${this.intent}`;
     if ( this.section )
@@ -52,7 +52,7 @@ class Foursquare extends API {
     this.epOperand = 'explore';
     this.intent = false;
     this.section = 'topPicks';
-    this.limit = 50;
+    this.limit = 25;
     return this.fetch();
   }
 }
