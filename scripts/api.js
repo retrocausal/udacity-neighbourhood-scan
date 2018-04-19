@@ -12,7 +12,13 @@ class API {
       } );
   }
 }
-
+class Flickr extends API {
+  constructor() {
+    super();
+    this.key = '9753596f1d6929aa87e5a8117516a840';
+    this.secret = 'a12b247c51db75c0';
+  }
+}
 class Foursquare extends API {
   constructor() {
     super();

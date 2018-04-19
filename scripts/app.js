@@ -49,6 +49,7 @@ const App = function () {
   this.errorMsg = ko.observable( '' );
   this.venues = ko.observableArray();
   this.currentVenue = ko.observable( '' );
+  this.plotter = ko.observable( {} );
   this.venueCards = new Map();
   //gather list of venues at current location from foursuare API
   this.fetchFSqVenues = function () {
@@ -102,8 +103,9 @@ const App = function () {
     }
     venueList = ( venueList.length ) ? venueList : venues;
     //On list updation, update google map object's markable places
-    if ( this.plotter instanceof GoogleMap ) {
-      this.plotter._locations = venueList;
+    if ( this.plotter() instanceof GoogleMap ) {
+      this.plotter()
+        ._locations = venueList;
     }
     return venueList;
   } );
@@ -128,8 +130,12 @@ const App = function () {
   //direct google map object to mark a place
   //happens when user clicks on a place
   this.showMe = ( venue ) => {
-    return this.plotter.markPlace( venue );
+    return this.plotter()
+      .markPlace( venue );
   };
+  this.setPlotter = function ( map ) {
+    this.plotter( map );
+  }
 };
 let ViewModel;
 //Where everything begins
@@ -148,5 +154,5 @@ const addPlotter = function () {
   const plotter = new GoogleMap()
     .init()
     .layout();
-  ViewModel.plotter = plotter;
+  ViewModel.setPlotter( plotter );
 };

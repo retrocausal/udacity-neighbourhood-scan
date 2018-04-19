@@ -22,6 +22,8 @@ class GoogleMap {
         lng: place.location.lng
       } );
     }
+    //rewrite latlngs
+    this.geocode();
     //Mark places
     this.markPlaces();
   }
@@ -65,6 +67,12 @@ class GoogleMap {
       marker[ 1 ].setMap( null );
     }
     this.markers.clear();
+  }
+  /*
+   *@geocode geocodes a place returned by foursquare for accuracy reasons
+   */
+  geocode() {
+    console.log( this.markables );
   }
   /*
    *@markPlaces places markers on the map
