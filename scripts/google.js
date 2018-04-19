@@ -13,17 +13,13 @@ class GoogleMap {
   }
   //When the app sets a list of locations, grab them
   set _locations( places ) {
-    //Reset and delete previously set markers
-    //  this.resetMarkers();
-    this.geocodeHelpers.clear();
-    this.markables.clear();
+    this.currentListOfVenues.clear();
     //Define a LatLng object for each place
     for ( const place of places ) {
-      this.markables.set( place, {
-        lat: place.location.lat,
-        lng: place.location.lng
-      } );
-      this.geocodeHelpers.set( place, place.location );
+      this.currentListOfVenues.add( place );
+      if ( !this.geocodedPlaces.has( place ) ) {
+        this.geocodables.add( place );
+      }
     }
     //rewrite latlngs
     this.geocode()
@@ -57,8 +53,11 @@ class GoogleMap {
     this.base = google.maps;
     this.markables = new Map();
     this.markers = new Map();
-    this.geocodeHelpers = new Map();
+    this.geocodedPlaces = new Set();
+    this.geocodables = new Set();
+    this.currentListOfVenues = new Set();
     this.altMarker();
+    this.icon = false;
     return this;
   }
   /*
@@ -74,9 +73,10 @@ class GoogleMap {
    */
   resetMarkers() {
     for ( const marker of this.markers ) {
-      marker[ 1 ].setMap( null );
+      if ( !this.currentListOfVenues.has( marker[ 0 ] ) ) {
+        marker[ 1 ].setMap( null );
+      }
     }
-    this.markers.clear();
   }
   /*
    *@geocode geocodes a place returned by foursquare for accuracy reasons
@@ -89,12 +89,12 @@ class GoogleMap {
     const gCoder = new this.base.Geocoder();
     let geocodables = new Set();
     //loop through foursquare returned set of places
-    for ( const helper of this.geocodeHelpers ) {
+    for ( const place of this.geocodables ) {
       //gather address , name, lat and lng
       //This is incase geocode can not geocode a foursquare venue
-      const address = helper[ 1 ].formattedAddress[ 0 ];
-      const name = helper[ 0 ].name;
-      const postalCode = helper[ 1 ].postalCode;
+      const address = place.location.formattedAddress[ 0 ];
+      const name = place.name;
+      const postalCode = place.location.postalCode;
       const geocoder = {
         address: name,
         componentRestrictions: {
@@ -103,65 +103,76 @@ class GoogleMap {
           postalCode: postalCode
         }
       };
-      const applyGeocode = ( results, status ) => {
-        if ( status === this.base.GeocoderStatus.OK ) {
-          const location = results[ 0 ].geometry.location;
-          const markable = this.markables.get( helper[ 0 ] );
-          markable.lat = location.lat();
-          markable.lng = location.lng();
+      const applyGeocode = ( location ) => {
+        const markable = {
+          lat: location.lat(),
+          lng: location.lng()
         }
+        this.markables.set( place, markable );
+        this.geocodedPlaces.add( place );
       };
       const asyncMapMark = ( resolve ) => {
         gCoder.geocode( geocoder, ( results, status ) => {
-          applyGeocode( results, status );
+          if ( results && status === this.base.GeocoderStatus.OK ) {
+            const location = results[ 0 ].geometry.location;
+            applyGeocode( location );
+          } else {
+            const markable = {
+              lat: place.location.lat,
+              lng: place.location.lng
+            };
+            this.markables.set( place, markable );
+          }
           resolve();
         } );
       };
-      const myPromise = new Promise( asyncMapMark )
-        .catch( exception => {
-          console.warn( exception );
-          return exception;
-        } );
+      const myPromise = new Promise( asyncMapMark );
       promises.push( myPromise );
     }
-    return Promise.all( promises );
+    return ( promises.length ) ? Promise.all( promises ) : Promise.resolve();
   }
   /*
    *@markPlaces places markers on the map
    *creates an infoWindow for each marker
    *binds the map to be centered around list of places
    */
-  markPlaces( place ) {
+  markPlaces() {
     //create infoWindow
     const infoWindow = new this.base.InfoWindow();
     //get current bounds
     const bounds = new this.base.LatLngBounds();
     //loop through list of markable locations
     for ( const markable of this.markables ) {
-      //create a marker
-      const marker = new this.base.Marker( {
-        title: markable[ 0 ].name,
-        map: this.map,
-        position: markable[ 1 ],
-        animation: this.base.Animation.DROP
-      } );
-      //add location to the bindable set of locations
-      //around which the map centers itself
-      bounds.extend( marker.position );
-      //grab the default marker icon
-      if ( !this.icon ) {
-        this.icon = marker.getIcon();
+      const place = markable[ 0 ];
+      let marker;
+      if ( !this.markers.get( place ) ) {
+        //create a marker
+        marker = new this.base.Marker( {
+          title: place.name,
+          position: markable[ 1 ],
+          animation: this.base.Animation.DROP
+        } );
+        //Add a listener to open the infoWindow
+        marker.addListener( 'click', () => {
+          marker.setAnimation( null );
+          this.showInfo( marker, infoWindow );
+        } );
+        //Push marker to a set of markers that go stale
+        //On next user input, and may need flushing off
+        this.markers.set( place, marker );
+        //grab the default marker icon
+        if ( this.icon === false ) {
+          this.icon = marker.getIcon();
+        }
+      } else {
+        marker = this.markers.get( place );
       }
-      //Add a listener to open the infoWindow
-      marker.addListener( 'click', () => {
-        marker.setAnimation( null );
-        this.showInfo( marker, infoWindow );
-      } );
-      //Push marker to a set of markers that go stale
-      //On next user input, and may need flushing off
-      const key = marker.title.toLowerCase()
-        .replace( / /g, '' );
-      this.markers.set( key, marker );
+      if ( this.currentListOfVenues.has( place ) ) {
+        //add location to the bindable set of locations
+        //around which the map centers itself
+        bounds.extend( marker.position );
+        marker.setMap( this.map );
+      }
     }
     //center the map
     this.map.fitBounds( bounds );
@@ -171,23 +182,21 @@ class GoogleMap {
    *highlighted blue, and bounced
    */
   highlightPlace( place ) {
-    const key = place.name.toLowerCase()
-      .replace( / /g, '' );
-    //Is the marker already placed?
-    const marker = this.markers.get( key );
     //Only this marker needs highlighting
     //So, reset icons of all other markers
     for ( const marker of this.markers ) {
-      marker[ 1 ].setIcon( this.icon );
-      marker[ 1 ].setAnimation( null );
+      if ( marker[ 0 ] === place ) {
+        //highlight this marker
+        marker[ 1 ].setIcon( this.altIcon );
+        marker[ 1 ].setAnimation( this.base.Animation.BOUNCE );
+      } else {
+        marker[ 1 ].setIcon( this.icon );
+        marker[ 1 ].setAnimation( null );
+      }
     }
-    //highlight this marker
-    marker.setIcon( this.altIcon );
     //center map
-    const center = marker.getPosition();
-    this.map.setCenter( center );
-    //bounce
-    marker.setAnimation( this.base.Animation.BOUNCE );
+    //  const center = thisMarker.getPosition();
+    //this.map.setCenter( center );
   }
   // This function populates the infowindow when the marker is clicked. We'll only allow
   // one infowindow which will open at the marker that is clicked, and populate based
@@ -201,6 +210,7 @@ class GoogleMap {
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener( 'closeclick', function () {
         infowindow.setMarker = null;
+        infowindow.close();
       } );
     }
   }

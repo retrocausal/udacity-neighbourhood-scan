@@ -40,7 +40,7 @@ const defineExtenders = function () {
  *It defines all possible view bound and other properties of our representation
  *of the app in terms of the data it abstracts
  */
-const App = function () {
+const App = function ( map ) {
   defineExtenders();
   this.ui_query = ko.observable( '' )
     .extend( {
@@ -50,11 +50,13 @@ const App = function () {
   this.venues = ko.observableArray();
   this.currentVenue = ko.observable( '' );
   this.venueCards = new Map();
+  this.plotter = map;
+  this.fSqAPI = new Foursquare();
   //gather list of venues at current location from foursuare API
   this.fetchFSqVenues = function () {
     //Fetch venues around the chosen place from foursquare
     /*@documentation : https://developer.foursquare.com/docs/api/venues/explore*/
-    return new Foursquare()
+    return this.fSqAPI
       .getExplorableVenues()
       .then( foursquare => {
         const recommendedVenues = foursquare.response.groups[ 0 ].items;
@@ -66,7 +68,7 @@ const App = function () {
       } )
       .catch( exception => {
         console.warn( exception );
-        this.errorMsg( this.fSqAPI()
+        this.errorMsg( this.fSqAPI
           .errorOnFetch );
       } )
   };
@@ -138,11 +140,11 @@ const App = function () {
 };
 let ViewModel;
 //Where everything begins
-const init = function () {
+const init = function ( map ) {
   //Do not use JQ
   ko.options.useOnlyNativeEvents = true;
   //create App
-  ViewModel = new App();
+  ViewModel = new App( map );
   //Apply Bindings
   ko.applyBindings( ViewModel );
   //fetch trending venues to list
@@ -154,6 +156,6 @@ const addPlotter = function () {
     .init()
     .layout();
   //Create new App
-  init();
-  ViewModel.setPlotter( plotter );
+  init( plotter );
+  //ViewModel.setPlotter( plotter );
 };

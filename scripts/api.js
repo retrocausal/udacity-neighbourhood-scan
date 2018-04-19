@@ -52,7 +52,7 @@ class Foursquare extends API {
     this.epOperand = 'explore';
     this.intent = false;
     this.section = 'topPicks';
-    this.limit = 25;
+    this.limit = 10;
     return this.fetch();
   }
 }
