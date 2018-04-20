@@ -14,6 +14,7 @@ class GoogleMap {
   //When the app sets a list of locations, grab them
   set _locations( places ) {
     this.currentListOfVenues.clear();
+    this.geocodables.clear();
     //Define a LatLng object for each place
     for ( const place of places ) {
       this.currentListOfVenues.add( place );
@@ -84,7 +85,7 @@ class GoogleMap {
    *hence, correct with a geocode search below
    */
   geocode() {
-    let promises = [];
+    let promises = new Set();
     //init geocoder
     const gCoder = new this.base.Geocoder();
     let geocodables = new Set();
@@ -92,16 +93,17 @@ class GoogleMap {
     for ( const place of this.geocodables ) {
       //gather address , name, lat and lng
       //This is incase geocode can not geocode a foursquare venue
-      const address = place.location.formattedAddress[ 0 ];
+      const address = `${place.location.address} ${place.location.city} ${place.location.state} ${place.location.postalCode} ${place.location.country}`;
       const name = place.name;
       const postalCode = place.location.postalCode;
       const geocoder = {
-        address: name,
+        address: address,
         componentRestrictions: {
           locality: 'New York',
           country: 'US',
           postalCode: postalCode
-        }
+        },
+        region: 'us'
       };
       const applyGeocode = ( location ) => {
         const markable = {
@@ -114,9 +116,11 @@ class GoogleMap {
       const asyncMapMark = ( resolve ) => {
         gCoder.geocode( geocoder, ( results, status ) => {
           if ( results && status === this.base.GeocoderStatus.OK ) {
+            console.log( place.name, results );
             const location = results[ 0 ].geometry.location;
             applyGeocode( location );
           } else {
+            console.log( place.name, status );
             const markable = {
               lat: place.location.lat,
               lng: place.location.lng
@@ -126,10 +130,12 @@ class GoogleMap {
           resolve();
         } );
       };
-      const myPromise = new Promise( asyncMapMark );
-      promises.push( myPromise );
+      if ( !this.geocodedPlaces.has( place ) ) {
+        const myPromise = new Promise( asyncMapMark );
+        promises.add( myPromise );
+      }
     }
-    return ( promises.length ) ? Promise.all( promises ) : Promise.resolve();
+    return ( promises.size ) ? Promise.all( promises ) : Promise.resolve();
   }
   /*
    *@markPlaces places markers on the map
@@ -155,7 +161,7 @@ class GoogleMap {
         //Add a listener to open the infoWindow
         marker.addListener( 'click', () => {
           marker.setAnimation( null );
-          this.showInfo( marker, infoWindow );
+          this.showInfo( marker, infoWindow, place );
         } );
         //Push marker to a set of markers that go stale
         //On next user input, and may need flushing off
@@ -189,19 +195,19 @@ class GoogleMap {
         //highlight this marker
         marker[ 1 ].setIcon( this.altIcon );
         marker[ 1 ].setAnimation( this.base.Animation.BOUNCE );
+        //center map
+        const center = marker[ 1 ].getPosition();
+        this.map.setCenter( center );
       } else {
         marker[ 1 ].setIcon( this.icon );
         marker[ 1 ].setAnimation( null );
       }
     }
-    //center map
-    //  const center = thisMarker.getPosition();
-    //this.map.setCenter( center );
   }
   // This function populates the infowindow when the marker is clicked. We'll only allow
   // one infowindow which will open at the marker that is clicked, and populate based
   // on that markers position.
-  showInfo( marker, infowindow ) {
+  showInfo( marker, infowindow, place ) {
     // Check to make sure the infowindow is not already opened on this marker.
     if ( infowindow.marker !== marker ) {
       infowindow.marker = marker;

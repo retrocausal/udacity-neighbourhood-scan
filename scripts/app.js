@@ -50,6 +50,7 @@ const App = function ( map ) {
   this.venues = ko.observableArray();
   this.currentVenue = ko.observable( '' );
   this.venueCards = new Map();
+  this.venueList = ko.observableArray();
   this.plotter = map;
   this.fSqAPI = new Foursquare();
   //gather list of venues at current location from foursuare API
@@ -63,6 +64,7 @@ const App = function ( map ) {
         for ( const recommendedVenue of recommendedVenues ) {
           this.venues.push( recommendedVenue.venue )
         }
+        this.clearFilter();
         this.errorMsg( '' );
         return recommendedVenues;
       } )
@@ -86,27 +88,15 @@ const App = function ( map ) {
     const venues = this.venues();
     let venueList = [];
     this.errorMsg( '' );
-    if ( this.ui_query()
-      .length ) {
-      //gatherr user input
-      const SubString = this.ui_query()
-        .toLowerCase();
-      //do a search
-      for ( const venue of venues ) {
-        if ( venue.name.toLowerCase()
-          .indexOf( SubString ) !== -1 ) {
-          venueList.push( venue );
-        }
+    //gatherr user input
+    const SubString = this.ui_query()
+      .toLowerCase();
+    //do a search
+    for ( const venue of venues ) {
+      if ( venue.name.toLowerCase()
+        .indexOf( SubString ) !== -1 ) {
+        venueList.push( venue );
       }
-      if ( !venueList.length ) {
-        this.errorMsg( 'Ugh! cant find that! Try something else' );
-      }
-    }
-    venueList = ( venueList.length ) ? venueList : venues;
-    //On list updation, update google map object's markable places
-    if ( this.plotter instanceof GoogleMap ) {
-      this.plotter
-        ._locations = venueList;
     }
     return venueList;
   } );
@@ -137,6 +127,32 @@ const App = function ( map ) {
   this.setPlotter = function ( map ) {
     this.plotter = map;
   }
+  this.getVenues = function ( filtered ) {
+    let venues = this.venues();
+    if ( filtered ) {
+      return this.filteredVenues();
+    }
+    return venues;
+  };
+  this.applyFilter = function () {
+    const venues = this.getVenues( true );
+    if ( !venues.length ) {
+      this.errorMsg( 'Ugh! cant find that! Try something else' );
+    }
+    if ( this.plotter instanceof GoogleMap && venues.length ) {
+      this.plotter._locations = venues;
+    }
+    this.venueList( venues );
+  };
+  this.clearFilter = function () {
+    //On list updation, update google map object's markable places
+    if ( this.plotter instanceof GoogleMap && this.venues()
+      .length ) {
+      this.plotter._locations = this.venues();
+    }
+    this.ui_query( '' );
+    this.venueList( this.venues() );
+  };
 };
 let ViewModel;
 //Where everything begins

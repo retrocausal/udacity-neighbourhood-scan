@@ -43,12 +43,20 @@
       </h2>
     </section>
     <section class="user-interface-interaction">
-      <input class="ui-interaction-box" type="text" name="query" value="" placeholder="a venue to view on the map" data-bind='textInput:ui_query'>
-      <span class="error error-msg" data-bind='visible: ui_query.hasError, text: ui_query.validationMessage'> </span>
+      <div class="interaction-input">
+        <input class="ui-interaction-box" type="text" name="query" value="" placeholder="a venue to view on the map" data-bind='textInput:ui_query'>
+      </div>
+      <div class="interaction-actions">
+        <button type="button" class="ui-button" name="button" data-bind='click:applyFilter'><a class="fas fa-filter fa-2x"></a></button>
+        <button type="button" class="ui-button" name="button" data-bind='click:clearFilter'><a class="fas fa-trash fa-2x"></a></button>
+      </div>
+      <div class="error" data-bind='visible: ui_query.hasError'>
+        <span class="error-msg" data-bind='text: ui_query.validationMessage'></span>
+      </div>
       <div class="error">
         <h5 class="error-msg" data-bind='text:errorMsg'></h5>
       </div>
-      <ul class="user-interface-places" data-bind='foreach:filteredVenues'>
+      <ul class="user-interface-places" data-bind='foreach:venueList'>
         <li class="user-interface-venue">
           <div class="venue-name" data-bind='text:name'></div>
           <div class="venue-details-drawer-opener">
