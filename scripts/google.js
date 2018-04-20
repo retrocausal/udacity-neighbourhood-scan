@@ -91,9 +91,9 @@ class GoogleMap {
     let geocodables = new Set();
     //loop through foursquare returned set of places
     for ( const place of this.geocodables ) {
-      //gather address , name, lat and lng
-      //This is incase geocode can not geocode a foursquare venue
+      //Build an address string to geocode
       const address = `${place.location.address} ${place.location.city} ${place.location.state} ${place.location.postalCode} ${place.location.country}`;
+      //gather component restrictions and other regional biases
       const name = place.name;
       const postalCode = place.location.postalCode;
       const geocoder = {
@@ -105,6 +105,7 @@ class GoogleMap {
         },
         region: 'us'
       };
+      //define personal per place handlers for geocoding
       const applyGeocode = ( location ) => {
         const markable = {
           lat: location.lat(),
@@ -116,11 +117,11 @@ class GoogleMap {
       const asyncMapMark = ( resolve ) => {
         gCoder.geocode( geocoder, ( results, status ) => {
           if ( results && status === this.base.GeocoderStatus.OK ) {
-            console.log( place.name, results );
+            //Place found!!! apply changes to foursquare's latlng
             const location = results[ 0 ].geometry.location;
             applyGeocode( location );
           } else {
-            console.log( place.name, status );
+            //Place not found??? well use foursquare's latlng
             const markable = {
               lat: place.location.lat,
               lng: place.location.lng
@@ -130,11 +131,14 @@ class GoogleMap {
           resolve();
         } );
       };
+      //re confirm that we are not duplicating these efforts to geocode
+      //If not, begin an async geocode process
       if ( !this.geocodedPlaces.has( place ) ) {
         const myPromise = new Promise( asyncMapMark );
         promises.add( myPromise );
       }
     }
+    //If there was geocoding, await finish elese resolve immediately
     return ( promises.size ) ? Promise.all( promises ) : Promise.resolve();
   }
   /*
@@ -215,8 +219,7 @@ class GoogleMap {
       infowindow.open( this.map, marker );
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener( 'closeclick', function () {
-        infowindow.setMarker = null;
-        infowindow.close();
+        infowindow.marker = null;
       } );
     }
   }

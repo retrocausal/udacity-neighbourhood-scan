@@ -1,7 +1,7 @@
 //isReady checks for DOMContentLoaded
 const isReady = ( bindApp, stallApp ) => {
   document.addEventListener( 'readystatechange', ( event ) => {
-    if ( document.readyState === "complete" ) {
+    if ( document.readyState === "interactive" ) {
       bindApp();
     }
   } );
