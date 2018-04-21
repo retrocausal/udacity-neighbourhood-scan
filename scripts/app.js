@@ -61,6 +61,7 @@ const App = function ( map ) {
   this.plotter = map;
   this.fSqAPI = new Foursquare();
   this.wiki = new Wiki();
+
   //gather list of venues at current location from foursuare API
   this.fetchFSqVenues = function () {
     //Fetch venues around the chosen place from foursquare
@@ -160,12 +161,11 @@ const App = function ( map ) {
   //direct google map object to mark a place
   //happens when user clicks on a place
   this.showMe = ( venue ) => {
+    this.closeDrawer();
     return this.plotter
       .highlightPlace( venue );
   };
-  this.setPlotter = function ( map ) {
-    this.plotter = map;
-  };
+  //Return listable set of venues
   this.getVenues = function ( filtered ) {
     let venues = this.venues();
     if ( filtered ) {
@@ -173,24 +173,43 @@ const App = function ( map ) {
     }
     return venues;
   };
+  //Applies a filter on the list of venues
   this.applyFilter = function () {
     const venues = this.getVenues( true );
+    //If no venues returned post filter, show error
     if ( !venues.length ) {
       this.errorMsg( 'Ugh! cant find that! Try something else' );
     }
+    //Set / Update markable venues
     if ( this.plotter instanceof GoogleMap && venues.length ) {
       this.plotter._locations = venues;
     }
+    //List filtered venues
     this.venueList( venues );
   };
+  //clears filters
   this.clearFilter = function () {
     //On list updation, update google map object's markable places
     if ( this.plotter instanceof GoogleMap && this.venues()
       .length ) {
       this.plotter._locations = this.venues();
     }
+    //clear search query
     this.ui_query( '' );
+    //List reset
     this.venueList( this.venues() );
+  };
+  //hamburger activate
+  this.openDrawer = function () {
+    //Activate Hamburgers
+    const body = document.querySelector( 'BODY' );
+    body.classList.remove( 'off-canvas-ui' );
+  };
+  //hamburger deactivate
+  this.closeDrawer = function () {
+    //DeActivate Hamburgers
+    const body = document.querySelector( 'BODY' );
+    body.classList.add( 'off-canvas-ui' );
   };
 };
 let ViewModel;
