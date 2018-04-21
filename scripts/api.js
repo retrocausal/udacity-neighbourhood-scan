@@ -1,10 +1,13 @@
 class API {
   constructor() {}
-  fetch() {
+  fetch( customError = '' ) {
+    if ( !this.getEndPoint() ) {
+      return false;
+    }
     return fetch( this.getEndPoint() )
       .then( response => {
         if ( !response.ok || response.status !== 200 ) {
-          throw new Error( this.onFetchError );
+          throw ( `${this.onFetchError} ${customError}` );
         } else {
           const customResponse = response.clone();
           return customResponse.json();
@@ -19,6 +22,26 @@ class Flickr extends API {
     this.secret = 'a12b247c51db75c0';
   }
 }
+class Wiki extends API {
+  constructor() {
+    super();
+    this.endpointBase = 'https://en.wikipedia.org/api/rest_v1/page/summary';
+    this.endpoint = `${this.endpointBase}/`; //`${this.endpointBase}?action=query&prop=extracts&format=json&redirects=yes&explaintext&exchars=250&exlimit=5&exintro`;
+    this.onFetchError = `could not find a wiki page for`;
+  }
+  setTitle( venue ) {
+    const title = ( venue ) ? `${venue.name}` : '';
+    this.title = encodeURI( title );
+    return this;
+  }
+  getEndPoint() {
+    let endpoint;
+    if ( this.title.length ) {
+      endpoint = `${this.endpoint}${this.title}`;
+    }
+    return endpoint;
+  }
+}
 class Foursquare extends API {
   constructor() {
     super();
@@ -30,8 +53,8 @@ class Foursquare extends API {
     this.near = 'NY';
     this.errorOnFetch = 'Could not load places to hang out at';
     this.limit = 24;
-    this.radius = 2500;
-    this.llAcc = 10000.0001;
+    this.radius = 100000;
+    this.llAcc = 10.0;
   }
   getEndPoint() {
     let ep = `${this.endpointBase}${this.epOperand}?v=${this.version_key}&client_id=${this.client_id}&client_secret=${this.client_key}&time=any&day=any&near=${this.near}&limit=${this.limit}&radius=${this.radius}&llAcc=${this.llAcc}`;
@@ -51,7 +74,7 @@ class Foursquare extends API {
   getExplorableVenues() {
     this.epOperand = 'explore';
     this.intent = false;
-    this.section = 'topPicks';
+    this.section = 'arts';
     this.limit = 10;
     return this.fetch();
   }

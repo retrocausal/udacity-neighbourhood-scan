@@ -16,16 +16,16 @@
       autoReplaceSvg: 'nest'
     }
   </script>
-  <title></title>
+  <title>Maps and Markers</title>
 </head>
 
 <body class="off-canvas-ui">
   <header>
     <section class="headmast">
       <h2 class="ui-headmast-drawer-opener">
-        <a class="fa fa-bars drawer-handle"></a>
-      </h2>
-      <h2 class="headmast-header">Neighbourhood at a glance</h2>
+          <a class="fa fa-bars drawer-handle"></a>
+        </h2>
+      <h2 class="headmast-header" data-bind='text:pageMastHeader'></h2>
     </section>
   </header>
   <main class="map-container">
@@ -39,8 +39,8 @@
     <section class="user-interface-headmast">
       <h2 class="ui-headmast-header">Options</h2>
       <h2 class="ui-headmast-drawer-closer">
-        <a class="fa fa-bars drawer-handle"></a>
-      </h2>
+          <a class="fa fa-bars drawer-handle"></a>
+        </h2>
     </section>
     <section class="user-interface-interaction">
       <div class="interaction-input">
@@ -75,6 +75,14 @@
               <div class="venue-map">
                 <a class="venue-revealer" data-bind='click:$parent.showMe'>view on map</a>
               </div>
+              <div class="venue-map">
+                <p>
+                  <a target="_blank" class="credit-anchor" data-bind='attr:{href:$parent.listorURI}'>
+                    <img class="responsive" data-bind='attr:{src:$parent.listorImg}' alt="foursquare attribution">
+                    </a>
+                </p>
+
+              </div>
             </section>
           </div>
         </li>
@@ -82,6 +90,25 @@
     </section>
   </aside>
   <footer>
+    <section class="credits">
+      <h2 class="centered-header" data-bind='text:creditor'></h2>
+      <ul class="credit-list">
+        <li class="credit-list-item">
+          <h2 class="centered-header">Venue Listing</h2>
+        </li>
+        <li class="credit-list-item">
+          <a class="credit-anchor" data-bind='attr:{href:listorURI}'>
+            <img class="responsive" data-bind='attr:{src:listorImg}' alt="foursquare attribution">
+            </a>
+        </li>
+        <li class="credit-list-item">
+          <h2 class="centered-header">Place details</h2>
+        </li>
+        <li class="credit-list-item">
+          <h2 class="centered-header" data-bind='text:informer'></h2>
+        </li>
+      </ul>
+    </section>
     <script src="./scripts/ready.js"></script>
     <script src="./scripts/api.js"></script>
     <script src="./scripts/app.js"></script>

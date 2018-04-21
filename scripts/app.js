@@ -46,6 +46,13 @@ const App = function ( map ) {
     .extend( {
       alphaNumeric: "Please input a combination of alphabets and numbers or just alphabets"
     } );
+  this.pageMastHeader = ko.observable( 'Art and you across New York' );
+  this.creditor = ko.observable( 'Credits and source attributions' );
+  this.listor = ko.observable( 'Foursquare' );
+  this.listorURI = ko.observable( 'https://developer.foursquare.com' );
+  this.informerURI = ko.observable( 'https://en.wikipedia.org' );
+  this.listorImg = ko.observable( './assets/static/rasters/Powered-by-Foursquare-full-color-600.png' );
+  this.informer = ko.observable( 'Wikipedia' );
   this.errorMsg = ko.observable( '' );
   this.venues = ko.observableArray();
   this.currentVenue = ko.observable( '' );
@@ -53,6 +60,7 @@ const App = function ( map ) {
   this.venueList = ko.observableArray();
   this.plotter = map;
   this.fSqAPI = new Foursquare();
+  this.wiki = new Wiki();
   //gather list of venues at current location from foursuare API
   this.fetchFSqVenues = function () {
     //Fetch venues around the chosen place from foursquare
@@ -62,17 +70,48 @@ const App = function ( map ) {
       .then( foursquare => {
         const recommendedVenues = foursquare.response.groups[ 0 ].items;
         for ( const recommendedVenue of recommendedVenues ) {
-          this.venues.push( recommendedVenue.venue )
+          this.venues.push( recommendedVenue.venue );
         }
         this.clearFilter();
         this.errorMsg( '' );
-        return recommendedVenues;
+        return this.venues();
+      } )
+      .then( venues => {
+        //Now that foursquare geve us top locations
+        //Loop through the list of venues from foursquare
+        for ( const venue of venues ) {
+          //Fetch more information from available wikipedia pages
+          this.wiki.setTitle( venue )
+            .fetch( venue.name )
+            .then( wiki => {
+              //Gather useful information not limited to extracts
+              let thumbnail = '';
+              let article = '';
+              const formattedInfoMarkup = wiki.extract_html || '';
+              const formattedInfo = wiki.extract || '';
+              if ( wiki.thumbnail )
+                thumbnail = wiki.thumbnail.source;
+              if ( wiki.content_urls )
+                article = wiki.content_urls.mobile || wiki.content_urls.desktop;
+              //Set a venue to information map on the plotter
+              //Used by google when displaying infowindows
+              this.plotter.venueInfo.set( venue, {
+                formattedInfo,
+                formattedInfoMarkup,
+                thumbnail,
+                article
+              } );
+            } )
+            .catch( wikiException => {
+              console.warn( wikiException );
+            } );
+        }
       } )
       .catch( exception => {
         console.warn( exception );
         this.errorMsg( this.fSqAPI
           .errorOnFetch );
-      } )
+      } );
   };
   /*
    *filteredVenues is what is listed on the app
@@ -126,7 +165,7 @@ const App = function ( map ) {
   };
   this.setPlotter = function ( map ) {
     this.plotter = map;
-  }
+  };
   this.getVenues = function ( filtered ) {
     let venues = this.venues();
     if ( filtered ) {

@@ -57,6 +57,7 @@ class GoogleMap {
     this.geocodedPlaces = new Set();
     this.geocodables = new Set();
     this.currentListOfVenues = new Set();
+    this.venueInfo = new Map();
     this.altMarker();
     this.icon = false;
     return this;
@@ -110,7 +111,7 @@ class GoogleMap {
         const markable = {
           lat: location.lat(),
           lng: location.lng()
-        }
+        };
         this.markables.set( place, markable );
         this.geocodedPlaces.add( place );
       };
@@ -215,7 +216,34 @@ class GoogleMap {
     // Check to make sure the infowindow is not already opened on this marker.
     if ( infowindow.marker !== marker ) {
       infowindow.marker = marker;
-      infowindow.setContent( `<div class='info-window'><h4>${marker.title}</h4></div>` );
+      const info = this.venueInfo.get( place ) || {
+        formattedInfoMarkup: '<p> None! Please close this window and try again in a minute</p>'
+      };
+      const container = document.createElement( 'DIV' );
+      container.classList.add( 'info-detail' );
+      const page = ( info.article ) ? info.article.page : null;
+      const extract = ( info.formattedInfoMarkup ) ? info.formattedInfoMarkup : null;
+      const text = ( info.formattedInfo ) ? `<p>${info.formattedInfo}</p>` : null;
+      const displayInfo = extract || text || `<p><h5>Address</h5></p><p>${place.location.formattedAddress}</p>`;
+      const thumbnail = ( info.thumbnail ) ? info.thumbnail : null;
+      if ( thumbnail ) {
+        const snap = new Image();
+        snap.classList.add( 'responsive' );
+        snap.src = thumbnail;
+        container.appendChild( snap );
+      }
+      const detail = document.createElement( 'Section' );
+      detail.classList.add( 'extract' );
+      detail.innerHTML = `<h4 class='centered-header'>Most relevant info found</h4>${displayInfo}`;
+      container.appendChild( detail );
+      const root = document.createElement( 'DIV' );
+      root.classList.add( 'info-window' );
+      const infoHeader = document.createElement( 'H4' );
+      infoHeader.classList.add( 'centered-header' );
+      infoHeader.innerHTML = `${marker.title}`;
+      root.appendChild( infoHeader );
+      root.appendChild( container );
+      infowindow.setContent( root );
       infowindow.open( this.map, marker );
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener( 'closeclick', function () {
