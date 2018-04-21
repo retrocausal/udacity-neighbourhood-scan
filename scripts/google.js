@@ -165,7 +165,8 @@ class GoogleMap {
         } );
         //Add a listener to open the infoWindow
         marker.addListener( 'click', () => {
-          marker.setAnimation( null );
+          //marker.setAnimation( null );
+          marker.setAnimation( this.base.Animation.BOUNCE );
           this.showInfo( marker, infoWindow, place );
         } );
         //Push marker to a set of markers that go stale
@@ -199,7 +200,7 @@ class GoogleMap {
       if ( marker[ 0 ] === place ) {
         //highlight this marker
         marker[ 1 ].setIcon( this.altIcon );
-        marker[ 1 ].setAnimation( this.base.Animation.BOUNCE );
+        //marker[ 1 ].setAnimation( this.base.Animation.BOUNCE );
         //center map
         const center = marker[ 1 ].getPosition();
         this.map.setCenter( center );
@@ -209,45 +210,31 @@ class GoogleMap {
       }
     }
   }
-  // This function populates the infowindow when the marker is clicked. We'll only allow
-  // one infowindow which will open at the marker that is clicked, and populate based
-  // on that markers position.
+  // This function populates an infowindow when the marker is clicked
+  // Only one infow window is allowed per marker.
+  //The infoWindow would possibly contain information fetched from wikipedia
   showInfo( marker, infowindow, place ) {
     // Check to make sure the infowindow is not already opened on this marker.
     if ( infowindow.marker !== marker ) {
       infowindow.marker = marker;
       const info = this.venueInfo.get( place ) || {
-        formattedInfoMarkup: '<p> None! Please close this window and try again in a minute</p>'
+        formattedInfoMarkup: '<p>Could not fetch info on wikipedia</p>'
       };
-      const container = document.createElement( 'DIV' );
-      container.classList.add( 'info-detail' );
-      const page = ( info.article ) ? info.article.page : null;
-      const extract = ( info.formattedInfoMarkup ) ? info.formattedInfoMarkup : null;
-      const text = ( info.formattedInfo ) ? `<p>${info.formattedInfo}</p>` : null;
-      const displayInfo = extract || text || `<p><h5>Address</h5></p><p>${place.location.formattedAddress}</p>`;
-      const thumbnail = ( info.thumbnail ) ? info.thumbnail : null;
-      if ( thumbnail ) {
-        const snap = new Image();
-        snap.classList.add( 'responsive' );
-        snap.src = thumbnail;
-        container.appendChild( snap );
-      }
-      const detail = document.createElement( 'Section' );
-      detail.classList.add( 'extract' );
-      detail.innerHTML = `<h4 class='centered-header'>Most relevant info found</h4>${displayInfo}`;
-      container.appendChild( detail );
-      const root = document.createElement( 'DIV' );
-      root.classList.add( 'info-window' );
-      const infoHeader = document.createElement( 'H4' );
-      infoHeader.classList.add( 'centered-header' );
-      infoHeader.innerHTML = `${marker.title}`;
-      root.appendChild( infoHeader );
-      root.appendChild( container );
-      infowindow.setContent( root );
+      info.sourceAttribution = ( this.venueInfo.get( place ) ) ? '<h6>Sourced from wikipedia</h6>' : '';
+      info.readmore = ( this.venueInfo.get( place ) ) ? `<a target=_blank href=${info.article.page}><h5>read more on wikipedia</h5></a>` : '<h5>Could not fetch info from wikipedia</h5>';
+      const detail = `<div class='info-window-detail'>
+                          <h5>${marker.title}</h5>
+                          <div class='detail'>${place.location.formattedAddress}</div>
+                          <div class='readmore'>${info.readmore}</div>
+                      </div>`;
+      //Begin constructing markup for the infowindow
+      infowindow.setContent( detail );
       infowindow.open( this.map, marker );
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener( 'closeclick', function () {
         infowindow.marker = null;
+        marker.setAnimation( null );
+        marker.setIcon( this.icon );
       } );
     }
   }

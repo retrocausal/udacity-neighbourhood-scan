@@ -239,31 +239,33 @@ img, svg, .responsive {
   line-height: 1.2;
 }
 
-.info-window {
-  width: calc(100% - 5em);
-  max-width: calc(100% - 5em);
+.info-window-detail {
+  max-width: 320px;
+  width: auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: center;
 }
 
-.info-detail {
+.detail {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: center;
+  padding: 0.5em;
+}
+
+.detail-address {
+  border-right: 1px solid #ccc;
+}
+
+.readmore {
+  width: 100%;
+  text-align: center;
+  padding: 0.1em;
 }
 
 .centered-header {
   width: 100%;
   text-align: center;
   margin: 1em auto;
-}
-
-.extract {
-  width: 100%;
 }
 
 .credits {
