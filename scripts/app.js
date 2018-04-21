@@ -202,15 +202,19 @@ const App = function ( map ) {
   //hamburger activate
   this.openDrawer = function () {
     //Activate Hamburgers
-    const body = document.querySelector( 'BODY' );
-    body.classList.remove( 'off-canvas-ui' );
+    this.offCanvasUI( false );
   };
   //hamburger deactivate
   this.closeDrawer = function () {
     //DeActivate Hamburgers
-    const body = document.querySelector( 'BODY' );
-    body.classList.add( 'off-canvas-ui' );
+    this.offCanvasUI( true );
   };
+  //Hamburger configuration
+  this.offCanvasUI = ko.observable( true );
+  //Hamburger handler
+  this.getOffCanvasUI = ko.computed( () => {
+    return this.offCanvasUI();
+  } );
 };
 let ViewModel;
 //Where everything begins

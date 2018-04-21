@@ -67,7 +67,7 @@ img, svg, .responsive {
   overflow-y: scroll;
 }
 
-.off-canvas-ui .user-interface {
+.offcanvas .user-interface {
   transform: translate3d(calc(-1*75vw), 0, 0);
   transition: transform 0.2s;
 }
