@@ -11,6 +11,9 @@
   .wikiCredit {
     order: 1;
   }
+  .info-window-detail {
+    max-width: 24vw;
+  }
 }
 
 @media Screen and (min-width:992px) {

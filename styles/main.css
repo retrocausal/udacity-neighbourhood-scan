@@ -254,7 +254,7 @@ img, svg, .responsive {
 }
 
 .info-window-detail {
-  max-width: 320px;
+  max-width: 60vw;
   width: auto;
   display: flex;
   flex-wrap: wrap;
