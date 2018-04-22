@@ -237,5 +237,4 @@ const addPlotter = function () {
     .layout();
   //Create new App
   init( plotter );
-  //ViewModel.setPlotter( plotter );
 };
