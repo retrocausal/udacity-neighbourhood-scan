@@ -48,7 +48,7 @@ The project has three tiers of logical separation of concerns
     - This detail is mapped to the google map object by knockout, on fetch results
     - The google map object uses these details to populate infowindows for when a place's marker is clicked.
 
-### Installation / Use
+### Installation
 
  - clone the repo
  - cd to the project folder
@@ -58,3 +58,17 @@ The project has three tiers of logical separation of concerns
        If you do not have it pre installed, run `npm install -g bower`
  - Navigate to the path of your project folder via a browser
      - preferrably, use a webserver such as `nginx / apache`
+
+### Art and you across NY
+
+ - From the list of available locations on the panel to the left,
+ see If you like any.
+ - If you do, expand the venue and click _view on map_
+     - You should see a marker on the map turn blue in a second or two.
+ - If there are a considerable lot of locations on the list on the panel, use the _Search box_ on the panel to narrow down the results
+     - You need to type in a string, and click on the _Funnel_ icon
+     - You can clear the filters by clicking the _Trash_ icon
+ - On the map, you can click on a _marker_ and If the app has gotten extra info from _Wikipedia_ , you should see a _read more_ link
+   - For your convenience, the marker bounces so you know which marker you have currently clicked
+   
+**Go on, and be an art aficionado**
