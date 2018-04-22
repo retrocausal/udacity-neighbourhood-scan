@@ -149,7 +149,7 @@ class GoogleMap {
    */
   markPlaces() {
     //create infoWindow
-    const infoWindow = new this.base.InfoWindow();
+    this.infoWindow = new this.base.InfoWindow();
     //get current bounds
     const bounds = new this.base.LatLngBounds();
     //loop through list of markable locations
@@ -165,7 +165,7 @@ class GoogleMap {
         } );
         //Add a listener to open the infoWindow
         marker.addListener( 'click', () => {
-          this.showInfo( marker, infoWindow, place );
+          this.showInfo( marker, this.infoWindow, place );
           for ( const mark of this.markers ) {
             if ( mark[ 1 ] === marker ) {
               mark[ 1 ].setAnimation( this.base.Animation.BOUNCE );
@@ -199,6 +199,9 @@ class GoogleMap {
    *highlighted blue, and bounced
    */
   highlightPlace( place ) {
+    if ( this.infoWindow ) {
+      this.infoWindow.close();
+    }
     //Only this marker needs highlighting
     //So, reset icons of all other markers
     for ( const marker of this.markers ) {
