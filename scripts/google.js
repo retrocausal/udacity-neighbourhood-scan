@@ -165,9 +165,14 @@ class GoogleMap {
         } );
         //Add a listener to open the infoWindow
         marker.addListener( 'click', () => {
-          //marker.setAnimation( null );
-          marker.setAnimation( this.base.Animation.BOUNCE );
           this.showInfo( marker, infoWindow, place );
+          for ( const mark of this.markers ) {
+            if ( mark[ 1 ] === marker ) {
+              mark[ 1 ].setAnimation( this.base.Animation.BOUNCE );
+            } else {
+              mark[ 1 ].setAnimation( null );
+            }
+          }
         } );
         //Push marker to a set of markers that go stale
         //On next user input, and may need flushing off
@@ -199,8 +204,8 @@ class GoogleMap {
     for ( const marker of this.markers ) {
       if ( marker[ 0 ] === place ) {
         //highlight this marker
+        marker[ 1 ].setAnimation( this.base.Animation.BOUNCE );
         marker[ 1 ].setIcon( this.altIcon );
-        //marker[ 1 ].setAnimation( this.base.Animation.BOUNCE );
         //center map
         const center = marker[ 1 ].getPosition();
         this.map.setCenter( center );
