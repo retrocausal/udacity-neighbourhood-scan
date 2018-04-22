@@ -90,7 +90,19 @@
     </section>
   </aside>
   <footer>
-
+    <section class="credits">
+      <div class="single-credit wikiCredit">
+        <p>Venue details by<a class="credit-anchor" target="_blank" data-bind='attr:{href:informerURI},text:informer'></a></p>
+      </div>
+      <div class="single-credit creditFsq">
+        <a target="_blank" class="credit-anchor" data-bind='attr:{href:listorURI}'>
+          <img class="responsive" data-bind='attr:{src:listorImg}' alt="foursquare attribution">
+          </a>
+      </div>
+      <div class="single-credit creditGoogle">
+        <p>Map and geocoding <a class="credit-anchor" target="_blank" data-bind='attr:{href:plotterURI},text:plotterName'></a></p>
+      </div>
+    </section>
     <script src="./scripts/ready.js"></script>
     <script src="./scripts/api.js"></script>
     <script src="./scripts/app.js"></script>
