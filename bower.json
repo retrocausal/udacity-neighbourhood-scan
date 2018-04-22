@@ -1,0 +1,27 @@
+{
+  "name": "Neighbourhood Scan",
+  "homepage": "https://github.com/retrocausal/udacity-neighbourhood-scan",
+  "authors": [
+    "Nitin Prabhakar <pmitwithnitin@gmail.com>"
+  ],
+  "description": "A Map based front end web application",
+  "main": "index.html",
+  "keywords": [
+    "map",
+    "knockout",
+    "google-map",
+    "foursquare",
+    "wikipedia"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "^3.4.2"
+  }
+}
